@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_chat/src/pages/login_page.dart';
+import 'package:flutter_chat/src/pages/chat_page.dart';
+
+import 'package:flutter_chat/src/pages/user_page.dart';
 import 'package:flutter_chat/src/routes/routes.dart';
 
 void main() {
@@ -11,11 +13,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Chat',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: LoginPage.routeName,
+      initialRoute: ChatPage.routeName,
       routes: getRoutes(),
     );
   }
