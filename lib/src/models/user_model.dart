@@ -1,11 +1,37 @@
+// To parse this JSON data, do
+//
+//     final userModel = userModelFromJson(jsonString);
+
+import 'dart:convert';
+
+UserModel userModelFromJson(String str) => UserModel.fromJson(json.decode(str));
+
+String userModelToJson(UserModel data) => json.encode(data.toJson());
+
 class UserModel {
-  final String uid;
-  final String name;
-  final String email;
-  final bool isOnline;
+  UserModel({
+    required this.name,
+    required this.email,
+    this.isOnline = false,
+    required this.uid,
+  });
 
-  UserModel({required this.uid, required this.name, this.isOnline = false, required this.email, });
+  String name;
+  String email;
+  bool isOnline;
+  String uid;
 
-  
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        name: json["nombre"],
+        email: json["email"],
+        isOnline: json["online"],
+        uid: json["uid"],
+      );
 
+  Map<String, dynamic> toJson() => {
+        "nombre": name,
+        "email": email,
+        "online": isOnline,
+        "uid": uid,
+      };
 }

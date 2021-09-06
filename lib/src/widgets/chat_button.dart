@@ -6,15 +6,15 @@ class ChatButton extends StatelessWidget {
   final String text;
   final Color color;
   final double height;
-  final Function() func;
+  final Function()? func;
 
   const ChatButton({
     Key? key,
-    required this.func,
+    this.func,
     required this.text,
     this.color = Colors.blue,
     this.height = 50.0,
-    }) : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +25,13 @@ class ChatButton extends StatelessWidget {
         shape: StadiumBorder(),
         color: color,
         onPressed: func,
+        disabledColor: Colors.black54,
         child: Container(
           alignment: Alignment.center,
           width: double.infinity,
           height: height,
           child: ChatText(
-            text: text, 
+            text: text,
             fontSize: Responsive.of(context).dp(2),
             color: Colors.white,
           ),
