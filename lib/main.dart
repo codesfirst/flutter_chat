@@ -4,6 +4,8 @@ import 'package:flutter_chat/src/pages/loading_page.dart';
 import 'package:flutter_chat/src/pages/login_page.dart';
 import 'package:flutter_chat/src/routes/routes.dart';
 import 'package:flutter_chat/src/services/auth_service.dart';
+import 'package:flutter_chat/src/services/chat_service.dart';
+import 'package:flutter_chat/src/services/socket_service.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,6 +21,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => AuthService(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => SocketService(),
+        ),
+        ChangeNotifierProvider(create: (_) => ChatService())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

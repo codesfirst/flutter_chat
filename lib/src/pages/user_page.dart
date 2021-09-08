@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat/src/models/user_model.dart';
+import 'package:flutter_chat/src/pages/chat_page.dart';
 import 'package:flutter_chat/src/pages/login_page.dart';
 import 'package:flutter_chat/src/services/auth_service.dart';
+import 'package:flutter_chat/src/services/chat_service.dart';
+import 'package:flutter_chat/src/services/socket_service.dart';
+import 'package:flutter_chat/src/services/user_service.dart';
 import 'package:flutter_chat/src/utils/responsive.dart';
 import 'package:flutter_chat/src/widgets/chat_text.dart';
 import 'package:provider/provider.dart';
@@ -18,35 +22,26 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   final _refreshController = RefreshController(initialRefresh: false);
+  final _userService = new UserService();
+  List<UserModel> userList = [];
 
-  final List<UserModel> userList = [
-    UserModel(
-        uid: "1",
-        email: "test1@gmail.com",
-        name: "Peter Herrera",
-        isOnline: true),
-    UserModel(
-      uid: "2",
-      email: "test2@gmail.com",
-      name: "Ana Mendez",
-    ),
-    UserModel(
-        uid: "3",
-        email: "test3@gmail.com",
-        name: "Fernando Lopez",
-        isOnline: true),
-  ];
+  @override
+  void initState() {
+    _loadUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final service = Provider.of<AuthService>(context);
+    final socket = Provider.of<SocketService>(context);
     final user = service.usuario;
     return Scaffold(
       appBar: AppBar(
         leading: Container(
           child: IconButton(
               onPressed: () {
-                // TODO: CERRAR SAOCKET
+                socket.disconnect();
                 Navigator.pushReplacementNamed(context, LoginPage.routeName);
                 AuthService.deleteToken();
               },
@@ -60,11 +55,15 @@ class _UserPageState extends State<UserPage> {
             child: ChatText(
                 text: "${user?.name}", fontSize: Responsive.of(context).dp(2))),
         actions: [
-          Icon(
-            Icons.check_circle_outline,
-            color: Colors.green,
-          ),
-          //Icon(Icons.offline_bolt_outlined, color: Colors.red,)
+          socket.serverStatus == ServerStatus.Online
+              ? Icon(
+                  Icons.check_circle_outline,
+                  color: Colors.green,
+                )
+              : Icon(
+                  Icons.offline_bolt_outlined,
+                  color: Colors.red,
+                ),
         ],
       ),
       body: SmartRefresher(
@@ -114,11 +113,20 @@ class _UserPageState extends State<UserPage> {
               borderRadius:
                   BorderRadius.circular(Responsive.of(context).dp(2))),
         ),
+        onTap: () {
+          final userFor = Provider.of<ChatService>(context, listen: false);
+          userFor.userFor = user;
+          Navigator.pushNamed(context, ChatPage.routeName);
+        },
       );
 
   void _loadUser() async {
+    final users = await _userService.getUsers();
+    this.userList = users;
+    setState(() {});
+
     // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+    //await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }

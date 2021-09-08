@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat/src/pages/login_page.dart';
 import 'package:flutter_chat/src/pages/user_page.dart';
 import 'package:flutter_chat/src/services/auth_service.dart';
+import 'package:flutter_chat/src/services/socket_service.dart';
 import 'package:flutter_chat/src/utils/responsive.dart';
 import 'package:flutter_chat/src/widgets/chat_text.dart';
 import 'package:provider/provider.dart';
@@ -35,8 +36,10 @@ class _LoadingPageState extends State<LoadingPage> {
 
   _loadData() async {
     final service = Provider.of<AuthService>(context, listen: false);
+    final socket = Provider.of<SocketService>(context, listen: false);
     final resp = await service.reNew();
     if (resp) {
+      socket.connect();
       Navigator.pushReplacement(
           context,
           PageRouteBuilder(

@@ -3,6 +3,7 @@ import 'package:flutter_chat/src/helpers/show_alert.dart';
 import 'package:flutter_chat/src/pages/register_page.dart';
 import 'package:flutter_chat/src/pages/user_page.dart';
 import 'package:flutter_chat/src/services/auth_service.dart';
+import 'package:flutter_chat/src/services/socket_service.dart';
 import 'package:flutter_chat/src/utils/responsive.dart';
 import 'package:flutter_chat/src/widgets/chat_button.dart';
 import 'package:flutter_chat/src/widgets/custom_input.dart';
@@ -59,10 +60,12 @@ class __FormState extends State<_Form> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   late AuthService service;
+  late SocketService socket;
 
   @override
   void initState() {
     service = Provider.of<AuthService>(context, listen: false);
+    socket = Provider.of<SocketService>(context, listen: false);
     super.initState();
   }
 
@@ -103,6 +106,7 @@ class __FormState extends State<_Form> {
     final resp = await service.login(
         emailController.text.trim(), passwordController.text.trim());
     if (resp) {
+      socket.connect();
       Navigator.pushReplacementNamed(context, UserPage.routeName);
     } else {
       showAlert(context, "Login Incorrecto", "Credenciales invalidas");
